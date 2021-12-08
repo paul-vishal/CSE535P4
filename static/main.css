@@ -1,0 +1,68 @@
+form {
+  background-color: #FFFFFF;
+  height: 44px;
+  border-width:thin;
+  border-radius: 10px;
+  padding:15px;
+  border-color:#000000;
+  border-style:solid;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 44px;
+  color:#000;
+  margin-left:auto;
+  margin-right:auto;
+  width:50%;
+}
+.search_btn{
+background-color:#FFFFFF;
+color:#000;
+height: 25px;
+border-radius:10px;
+border-width:thin;
+border-color:#000000;
+border-style:solid;
+margin-left:auto;
+margin-right:auto;
+width:10%;
+}
+.logo{
+display:block;
+margin-left:auto;
+margin-right:auto;
+width:50%;
+}
+input {
+  all: unset;
+  font: 16px system-ui;
+  color: #000;
+  height: 100%;
+  width: 100%;
+  padding: 6px 10px;
+  opacity:0.7;
+}
+::placeholder {
+  color: #000;
+  opacity: 1.0;
+  padding:10px;
+}
+button {
+  all: unset;
+  cursor: pointer;
+  margin-left:auto;
+  margin-right:auto;
+  width:10%;
+  margin-bottom:6px;
+  height: 38px;
+  color:#000;
+}
+svg {
+  color: #000;
+  fill: currentColor;
+  border-radius: 10px;
+  width: 40px;
+  height: 44px;
+  padding: 10px;
+  opacity:0.7;
+}
