@@ -1,9 +1,10 @@
 import requests
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 import urllib.request
 import urllib
 
 app = Flask(__name__)
+
 AWS_IP = '18.221.65.93'
 AWS_PORT = '8983'
 SOLR_CORE_NAME = 'IR_P4'
