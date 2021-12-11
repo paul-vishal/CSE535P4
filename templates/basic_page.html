@@ -13,75 +13,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-            //Load the Visualization API and the ready-made Google table visualization
-            google.load('visualization', '1', {'packages':['corechart']});
-        </script>
-    <script type="text/javascript">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-      // Load the Visualization API and the corechart package.
-      google.charts.load('current', {'packages':['corechart']});
-
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawChartA);
-      google.charts.setOnLoadCallback(drawChartB);
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      function drawChartA() {
-
-        // Create the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
-        ]);
-
-        // Set chart options
-        var options = {'title':'Tweet analysis',
-                       'width':400,
-                       'height':300};
-
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-      function drawChartB() {
-
-        // Create the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
-        ]);
-
-        // Set chart options
-        var options = {'title':'Tweet analysis',
-                       'width':400,
-                       'height':300};
-
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
-        chart.draw(data, options);
-      }
-    </script>
 </head>
+
 <body>
     <div class="topnav">
-      <img src="/static/logo.jpg" width="60" height="60" class="d-inline-block align-top float-left" alt="">
-      <a href="#" action="index">Home</a>
-      <a href="#news">Overview</a>
+      <img src="/static/logo.jpg" width="60" height="58" class="d-inline-block align-top float-left" alt="">
+      <a href="#" class="active">Home</a>
+      <a href="overview" action="overview">Overview Analysis</a>
     </div>
     <br>
 
@@ -142,22 +84,9 @@
                         <div class="cards">
                                 <div class="container">
                                     <div class="_card">
-                                        <div class="cardheader"> Tweet id: </div>{{card.id}}
+                                        <div class="cardheader"></div>{{card.tweet_text}}
                                     </div>
-                                    <div class="_card">
-                                        <div class="cardheader"> Tweet text: </div> {{card.tweet_text}}
-                                    </div>
-                                    <div class="_card">
-                                        <div class="cardheader"> Sentiment: </div> {{card.sentiment}}
-                                    </div>
-                                    <div class="_card">
-                                        <div class="cardheader">Sentiment Score: </div> {{card.sentiment_score}}
-                                    </div>
-                                    <div class="_card">
-                                        <div class="cardheader">Relevancy Score: </div> {{card.score}}
-                                    </div>
-                                    <div class="description">
-                                    </div>
+
                                 </div>
                             </div>
                         </div><br>
@@ -199,11 +128,30 @@
             <div class="col-md-4 text-center font-weight-bold">
                 Tweet Analysis
                 <hr size="8" width="80%" color="gray">
-                <div id="chart_div" class="graph"></div>
-                <div id="bar_div" class="graph"></div>
+                <div class="col-md-12">
+                <div class="font-weight-bold"><center>
+                Sentiment Analysis on the Query
+                    </center>
+                    <div id="chart" class="chart"></div>
+                </div>
+                </div>
+                <div class="col-md-12">
+                <div class="font-weight-bold"><center>
+                Language Distribution on the Query
+                    </center>
+                    <div id="lang_analysis" class="chart"></div>
         </div>
     </div>
 
-</div>
+            </div></div></div>
 </body>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script type='text/javascript'>
+        var graphs = {{ graphJSON | safe}};
+        Plotly.plot('chart', graphs, {});
+    </script>
+<script type='text/javascript'>
+        var graphs = {{ langJSON | safe}};
+        Plotly.plot('lang_analysis', graphs, {});
+    </script>
 </html>
