@@ -9,7 +9,7 @@ from tweet_sentiment_analysis import get_sentiment_score
 
 app = Flask(__name__)
 
-AWS_IP = '3.17.148.156'
+AWS_IP = '3.144.167.111'
 AWS_PORT = '8983'
 SOLR_CORE_NAME = 'IR_P4'
 

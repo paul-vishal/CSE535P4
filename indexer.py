@@ -7,7 +7,7 @@ import requests
 
 
 CORE_NAME = "IR_P4"
-AWS_IP = "13.58.180.82"
+AWS_IP = "3.144.167.111"
 
 # [CAUTION] :: Run this script once, i.e. during core creation
 
@@ -325,5 +325,5 @@ class Indexer:
 if __name__ == "__main__":
     i = Indexer()
     #i.do_initial_setup()
-    i.replace_BM25()
+    i.replace_BM25(b=0.8, k1=1.4)
     i.add_fields()
