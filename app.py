@@ -1,8 +1,7 @@
+import re
 import plotly.utils
 import requests
 from flask import Flask, render_template, request
-import urllib.request
-import urllib
 import plotly.graph_objs as go
 import json
 from tweet_sentiment_analysis import get_sentiment_score
@@ -166,20 +165,25 @@ def tweetsearch():
             pos += 1
         else:
             neg += 1
-    neg_per = ((neg / tot) * 100)
-    pos_per = ((pos / tot) * 100)
-    mix_per = ((mix / tot) * 100)
-    neu_per = ((neutral / tot) * 100)
-    trace2 = go.Pie(labels=['English', 'Spanish', 'Hindi'], values=[total_en, total_es, total_hi])
-    data3 = [trace2]
-    langJSON = json.dumps(data3, cls=plotly.utils.PlotlyJSONEncoder)
-    trace1 = go.Pie(labels=['Negative', 'Positive', 'Mixed', 'Neutral'], values=[neg_per, pos_per, mix_per, neu_per])
-    data2 = [trace1]
-    graphJSON = json.dumps(data2, cls=plotly.utils.PlotlyJSONEncoder)
-    docs = data['response']['docs']
-    trace5 = go.Bar(x=list(poi.keys()), y=list(poi.values()), orientation='v', opacity=0.7)
-    data5 = [trace5]
-    poi_tweet = json.dumps(data5, cls=plotly.utils.PlotlyJSONEncoder)
+    docs = {}
+    graphJSON = {}
+    langJSON = {}
+    poi_tweet = {}
+    if tot > 0:
+        neg_per = ((neg / tot) * 100)
+        pos_per = ((pos / tot) * 100)
+        mix_per = ((mix / tot) * 100)
+        neu_per = ((neutral / tot) * 100)
+        trace2 = go.Pie(labels=['English', 'Spanish', 'Hindi'], values=[total_en, total_es, total_hi])
+        data3 = [trace2]
+        langJSON = json.dumps(data3, cls=plotly.utils.PlotlyJSONEncoder)
+        trace1 = go.Pie(labels=['Negative', 'Positive', 'Mixed', 'Neutral'], values=[neg_per, pos_per, mix_per, neu_per])
+        data2 = [trace1]
+        graphJSON = json.dumps(data2, cls=plotly.utils.PlotlyJSONEncoder)
+        docs = data['response']['docs']
+        trace5 = go.Bar(x=list(poi.keys()), y=list(poi.values()), orientation='v', opacity=0.7)
+        data5 = [trace5]
+        poi_tweet = json.dumps(data5, cls=plotly.utils.PlotlyJSONEncoder)
     """text=[]
     for i in docs:
         text.append(i["tweet_text"])"""
@@ -189,24 +193,28 @@ def tweetsearch():
 
 
 def tweetnews(query):
-    input_query = query
-    encoded_query = preprocess(input_query)
-    news_query_url = 'https://newsapi.org/v2/everything?q=' + encoded_query + '&from=2021-12-06&apiKey=ae9778d05cd74f219e4fcaf7afad1c3a'
-    news_data = requests.get(news_query_url).json()
-    news_docs = news_data['articles']
     news_docs_20 = []
-    for article in news_docs:
-        description = article.get('description')
-        sentiment, sentiment_score = get_sentiment_score(description)
-        article['sentiment'] = sentiment
-        article['sentiment_score'] = sentiment_score
-        news_docs_20.append(article)
+    query = preprocess(query)
+    try:
+        input_query = query
+        encoded_query = preprocess(input_query)
+        news_query_url = 'https://newsapi.org/v2/everything?q=' + encoded_query + '&sortBy=publishedAt&apiKey=ae9778d05cd74f219e4fcaf7afad1c3a'
+        news_data = requests.get(news_query_url).json()
+        news_docs = news_data['articles'][:40]
+        for article in news_docs:
+            description = article.get('description')
+            sentiment, sentiment_score = get_sentiment_score(description)
+            article['sentiment'] = sentiment
+            article['sentiment_score'] = sentiment_score
+            news_docs_20.append(article)
+    except Exception as e:
+        print(e)
     return news_docs_20
 
 
 def preprocess(query):
+    query = re.sub(r'[^\w\s]', '', query)
     query = query.strip('\n').replace(':', '')
-    query = urllib.parse.quote(query)
     return query
 
 
