@@ -86,9 +86,13 @@
                                     <div class="_card">
                                         <div class="cardheader"></div>{{card.tweet_text}}
                                     </div>
-                                    <br>
+                                    
                                     <div class="_card">
                                         <div class="cardheader">Average Sentiment of Tweet: </div>{{card.sentiment_score}}
+                                    </div>
+
+                                    <div class="_card">
+                                        <div class="cardheader">Tweet Sentiment: </div>{{card.sentiment}}
                                     </div>
                                 </div>
                             </div>
@@ -111,13 +115,19 @@
                                 <div class="container">
                                     <div class="_card">
                                         <div class="cardheader"> Title: </div>{{news_card.title}}
-                                    </div><br>
+                                    </div>
                                     <div class="_card">
                                         <div class="cardheader"> Description: </div> {{news_card.description}}
-                                    </div><br>
+                                    </div>
                                     <div class="_card">
                                         <div class="cardheader"> News URL: </div> <a href={{news_card.url}} target="_blank">{{news_card.url}}</a>
-                                    </div><br>
+                                    </div>
+                                    <div class="_card">
+                                        <div class="cardheader"> Sentiment: </div> {{ news_card.sentiment }}
+                                    </div>
+                                    <div class="_card">
+                                        <div class="cardheader"> Sentiment Score: </div> {{ news_card.sentiment_score }}
+                                    </div>
                                     <div class="description">
                                     </div>
                                 </div>

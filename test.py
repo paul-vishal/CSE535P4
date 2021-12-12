@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from indexer import Indexer
-
+from app import tweetnews
 
 def main():
     indexer = Indexer()
@@ -36,5 +36,11 @@ def main():
     print('Total:', total)
 
 
+def test_tweet_news(query):
+    docs = tweetnews(query)
+    print(docs)
+
+
 if __name__ == "__main__":
-    main()
+    test_tweet_news("vaccine is effective")
+    #main()

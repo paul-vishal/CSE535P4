@@ -5,6 +5,7 @@ import urllib.request
 import urllib
 import plotly.graph_objs as go
 import json
+from tweet_sentiment_analysis import get_sentiment_score
 
 app = Flask(__name__)
 
@@ -20,8 +21,10 @@ def index():
 
 @app.route('/overview')
 def overview():
-    query_calc = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?q=*%3A*&rows=58000'
+    query_calc = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?q=*%3A*&rows=90349'
+    query_poi = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?q=poi_name%3A*&rows=90349'
     json_file = requests.get(query_calc).json()
+    poi_json = requests.get(query_poi).json()
     hi = 0
     en = 0
     ind_sent = [0, 0, 0, 0]  # pos,neg,neu,mix
@@ -30,12 +33,13 @@ def overview():
     es = 0
     dates = dict()
     poi = dict()
+    for i in poi_json["response"]["docs"]:
+        if i["poi_name"] not in poi.keys():
+            poi[i["poi_name"]] = 0
+        else:
+            poi[i["poi_name"]] += 1
+
     for i in json_file["response"]["docs"]:
-        if "poi_name" in i:
-            if i["poi_name"] not in poi.keys():
-                poi[i["poi_name"]] = 0
-            else:
-                poi[i["poi_name"]] += 1
         date = i["tweet_date"][8:10] + "-" + i["tweet_date"][5:7] + "-" + i["tweet_date"][0:4]
         if date not in dates.keys():
             dates[date] = 0
@@ -108,8 +112,7 @@ def overview():
                                                                us_sent[0] + us_sent[1] + us_sent[2] + us_sent[3]])
     data4 = [trace4]
     country_tweet = json.dumps(data4, cls=plotly.utils.PlotlyJSONEncoder)
-
-    trace5 = go.Bar(x=list(poi.keys()), y=list(poi.values()), orientation='v', opacity=0.7)
+    trace5 = go.Bar(x=list(poi.values()), y=list(poi.keys()), orientation='h', opacity=0.7)
     data5 = [trace5]
     poi_tweet = json.dumps(data5, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -193,6 +196,10 @@ def tweetnews(query):
     news_docs = news_data['articles']
     news_docs_20 = []
     for article in news_docs:
+        description = article.get('description')
+        sentiment, sentiment_score = get_sentiment_score(description)
+        article['sentiment'] = sentiment
+        article['sentiment_score'] = sentiment_score
         news_docs_20.append(article)
     return news_docs_20
 

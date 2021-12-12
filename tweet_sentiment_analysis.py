@@ -27,8 +27,8 @@ def save_file(data, filename):
 
 def get_sentiment_score(text):
     comprehend = boto3.client(service_name='comprehend', region_name='us-east-2',
-                              aws_access_key_id='AKIARECXADUDPVTLEIN2',
-                              aws_secret_access_key='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')
+                              aws_access_key_id='AKIAVQIGLH3RB3I3YCEL',
+                              aws_secret_access_key='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')
     sentiment_json = comprehend.detect_sentiment(Text=text, LanguageCode='en')
     sentiment = sentiment_json['Sentiment']
     score = sentiment_json['SentimentScore'][sentiment.capitalize()]
