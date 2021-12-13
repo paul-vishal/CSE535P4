@@ -11,6 +11,8 @@ app = Flask(__name__)
 AWS_IP = '3.144.167.111'
 AWS_PORT = '8983'
 SOLR_CORE_NAME = 'IR_P4'
+inp_query = ""
+
 
 
 @app.route('/index')
@@ -120,15 +122,41 @@ def overview():
                            country_tweet=country_tweet, poi_tweet=poi_tweet)
 
 
-@app.route('/tweet_search')
+@app.route('/tweet_search', methods=['POST', 'GET'])
 def tweetsearch():
+    global inp_query
+    poi_name,cntry, lang = "","",""
     input_query = request.args.get('query')
+    if input_query!=None:
+        inp_query = input_query
+    else:
+        input_query = inp_query
+    poi_part = ""
+    cntry_part = ""
+    lang_part = ""
+    if request.method == "POST":
+        # input_query = "Hi"
+        poi_name = request.form.get('POI')
+        cntry = request.form.get('country')
+        lang = request.form.get('lang')
+        if poi_name!="All" and poi_name is not None:
+            poi_part = '&fq=poi_name%3A('+poi_name+')'
+        if cntry!="All" and cntry is not None:
+            cntry_part = '&q=country%3A('+cntry+')'
+        if lang!="All" and lang is not None:
+            lang_part = '&fq=tweet_lang%3A('+lang+')'
+        print(input_query,poi_name, cntry, lang)
+        print("got here", input_query, poi_part, cntry_part, lang_part)
+
     if input_query is None or input_query == '':
+        print('rendering basic page')
         return render_template('basic_page.html')
     encoded_query = preprocess(input_query)
     fig = go.Figure()
-    query_url = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?fl=id%20score%20tweet_text%20sentiment%20sentiment_score&q=text_en%3A(' + encoded_query + ')%20or%20text_hi%3A(' + encoded_query + ')%20or%20text_es%3A(' + encoded_query + ')&rows=50'
-    query_calc = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?q=text_en%3A(' + encoded_query + ')%20or%20text_hi%3A(' + encoded_query + ')%20or%20text_es%3A(' + encoded_query + ')&rows=58000'
+    query_url = 'http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?fl=id%20score%20tweet_text%20sentiment%20sentiment_score&q=text_en%3A(' + encoded_query + ')%20or%20text_hi%3A(' + encoded_query + ')%20or%20tweet_text%3A(' + encoded_query + ')%20or%20text_es%3A(' + encoded_query + ')'+poi_part+lang_part+cntry_part+'&rows=50'
+    query_sent='http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?fl=id%20score%20tweet_text%20sentiment%20sentiment_score&q=text_en%3A(' + encoded_query + ')%20or%20text_hi%3A(' + encoded_query + ')%20or%20tweet_text%3A(' + encoded_query + ')%20or%20text_es%3A(' + encoded_query + ')'+poi_part+lang_part+cntry_part+'&rows=58000'
+    query_calc='http://' + AWS_IP + ':' + AWS_PORT + '/solr/' + SOLR_CORE_NAME + '/select?q=text_en%3A(' + encoded_query + ')%20or%20tweet_text%3A(' + encoded_query + ')%20or%20text_hi%3A(' + encoded_query + ')%20or%20text_es%3A(' + encoded_query + ')'+poi_part+lang_part+cntry_part+'&rows=58000'
+    print(query_url)
     data = requests.get(query_url).json()
     data1 = requests.get(query_calc).json()
     total_lang = 0
@@ -188,7 +216,13 @@ def tweetsearch():
     for i in docs:
         text.append(i["tweet_text"])"""
     news_docs = tweetnews(input_query)
-    return render_template('basic_page.html', tweet_search=docs, tweet_news=news_docs, graphJSON=graphJSON,
+    print("here now", input_query)
+
+    if request.method == "POST":
+        return render_template('basic_page.html', query = input_query, poi=poi_name, cntry = cntry, lang = lang, tweet_search=docs, tweet_news=news_docs, graphJSON=graphJSON,
+                           langJSON=langJSON, poi_tweet=poi_tweet)
+
+    return render_template('basic_page.html', query = input_query, poi=poi_name, cntry = cntry, lang = lang, tweet_search=docs, tweet_news=news_docs, graphJSON=graphJSON,
                            langJSON=langJSON, poi_tweet=poi_tweet)
 
 

@@ -19,7 +19,11 @@
 
 </head>
 
+
 <body>
+    <!-- <script>
+        location.reload()
+    </script> -->
     <div class="topnav">
       <img src="/static/logo.jpg" width="60" height="58" class="d-inline-block align-top float-left" alt="">
       <a href="#" class="active">Home</a>
@@ -33,7 +37,7 @@
                 <form class="form-inline" id="form2" method="get" action="{{ url_for('tweetsearch')}}">
                     <div class="font-weight-bold">Search Query:&nbsp</div>
                     <label for="query"></label>
-                    <input type="text" id="query" name="query" placeholder="Search" >
+                    <input type="text" id="query" name="query" placeholder="Search" value={{ query }}>
                     <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
@@ -42,29 +46,42 @@
                 Search Filters:
                 </div>
                 <br>
+                <form calss ="form-inline" id="form2" method="post" action="{{ url_for('tweetsearch')}}">
                 <label for="POI">POI:</label>
-                <select name="POI" id="POI">
-                  <option value="Narendra Modi">Narendra Modi</option>
-                  <option value="Balasaheb Thakre">Balasaheb Thakre</option>
-                  <option value="Rajnath Singh">Rajnath Singh</option>
+                <select name="POI" id="POI" value={{poi}}>
+                    <option value="All">All</option>
+                    <option value="CDCgov" {% if poi == "CDCgov" %} selected{% endif %}>CDC</option>
+                    <option value="AlejandraDMV" {% if poi == "AlejandraDMV" %} selected{% endif %}>Alejandra Del Moral</option>
+                    <option value="alfredodelmazo" {% if poi == "alfredodelmazo" %} selected{% endif %}>Alfredo Del Mazo</option>
+                    <option value="CDCDirector" {% if poi == "CDCDirector" %} selected{% endif %}>CDC Director</option>
+                    <option value="DrBharatippawar" {% if poi == "DrBharatippawar" %} selected{% endif %}>Dr Bharati Pawar</option>
+                    <option value="EbonyJHilton_MD" {% if poi == "EbonyJHilton_MD" %} selected{% endif %}>Ebony J Hilton</option>
+                    <option value="HHS_ASH" {% if poi == "HHS_ASH" %} selected{% endif %}>ADM Rachel Levine</option>
+                    <option value="HLGatell" {% if poi == "HLGatell" %} selected{% endif %}>Hugo López-Gatell</option>
+                    <option value="ICMRDELHI" {% if poi == "ICMRDELHI" %} selected{% endif %}>ICMR Delhi</option>
+                    <option value="lopezobrador_" {% if poi == "lopezobrador_" %} selected{% endif %}>Andrés Manuel</option>
+                    <option value="mansukhmandviya" {% if poi == "mansukhmandviya" %} selected{% endif %}>Dr Mansukh Mandaviya</option>
+                    <option value="MoHFW_INDIA" {% if poi == "MoHFW_INDIA" %} selected{% endif %}>MoHFW India</option>
+                    <option value="narendramodi" {% if poi == "narendramodi" %} selected{% endif %}>Narendra Modi</option>
+                    <option value="SecBecerra" {% if poi == "SecBecerra" %} selected{% endif %}>Sec. Xavier Becerra</option>
+                    <option value="SSalud_mx" {% if poi == "SSalud_mx" %} selected{% endif %}>SALUD México</option>
                 </select>
                 <label for="country">Country:</label>
-                <select name="country" id="country">
-                  <option value="India">India</option>
-                  <option value="USA">USA</option>
-                  <option value="Mexico">Mexico</option>
+                <select name="country" id="country" value={{cntry}}>
+                    <option value="All">All</option>
+                    <option value="India"  {% if cntry == "India" %} selected{% endif %}>India</option>
+                    <option value="USA"  {% if cntry == "USA" %} selected{% endif %}>USA</option>
+                    <option value="Mexico"  {% if cmtry == "Mexico" %} selected{% endif %}>Mexico</option>
                 </select>
                 <label for="lang">Language:</label>
-                <select name="lang" id="lang">
-                  <option value="hindi">hindi</option>
-                  <option value="english">english</option>
-                  <option value="spanish">spanish</option>
+                <select name="lang" id="lang" value={{lang}}>
+                    <option value="All">All</option>
+                    <option value="hi"  {% if lang == "hi" %} selected{% endif %}>Hindi</option>
+                    <option value="en"  {% if lang == "en" %} selected{% endif %}>English</option>
+                    <option value="es"  {% if lang == "es" %} selected{% endif %}>Spanish</option>
                 </select>
-                <label for="topic">Topic:</label>
-                <select name="topic" id="topic">
-                  <option value="covid">covid</option>
-                  <option value="vaccine">vaccine</option>
-                </select>
+                <button type="submit" class="btn btn-default">Filter</button>
+                </form>
             </div>
         </div>
     </div>
@@ -142,28 +159,82 @@
                 Tweet Analysis
                 <hr size="8" width="80%" color="gray">
                 <div class="col-md-12">
-                <div class="font-weight-bold"><center>
-                Sentiment Analysis on the Query
+                <div class="font-weight-bold">
+                    <center>
+                        Sentiment Analysis on the Query
                     </center>
-                    <div id="chart" class="chart"></div>
+                <div id="chart" class="chart"></div>
                 </div>
                 </div>
                 <div class="col-md-12">
-                <div class="font-weight-bold"><center>
-                Language Distribution on the Query
+                <div class="font-weight-bold">
+                    <center>
+                        Language Distribution on the Query
                     </center>
-                    <div id="lang_analysis" class="chart"></div>
+                <div id="lang_analysis" class="chart"></div>
         </div>
     </div>
                 <div class="col-md-12">
-                <div class="font-weight-bold"><center>
-                Tweet Count for POI related to Query
+                <div class="font-weight-bold">
+                    <center>
+                        Tweet Count for POI related to Query
                     </center>
-                    <div id="poi_tweet" class="chart"></div>
+                <div id="poi_tweet" class="chart"></div>
         </div>
     </div>
 
             </div></div></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // $("#POI").selectpicker();
+    
+                function load_data(type, query, poi, cntry, lang) {
+                    // print("hello")
+                    // $.ajax({
+                    //     url: "{{url_for('tweetsearch')}}",
+                    //     method: "POST",
+                    //     data: { 'type': type, 'query':query, 'POI': poi, 'country':cntry, 'lang':lang },
+                    //     dataType: "application/json;charset=UTF-8",
+                    //     success: function (data) { 
+                    //         alert('got data')
+                    //     },
+                    // });
+                    // location.reload()
+                }
+    
+                $(document).on("change", "#POI", function () {
+                    var poi = $("#POI").val();
+                    var cntry = $("#country").val();
+                    var lang = $("#lang").val();
+                    var query = $("#query").val();
+                    // alert(category_id)
+                    
+                    load_data("filter", query, poi, cntry, lang);
+                });
+
+                $(document).on("change", "#country", function () {
+                    var poi = $("#POI").val();
+                    var cntry = $("#country").val();
+                    var lang = $("#lang").val();
+                    var query = $("#query").val();
+                    // alert(category_id)
+                    load_data("filter", query, poi, cntry, lang);
+                });
+
+                $(document).on("change", "#lang", function () {
+                    var poi = $("#POI").val();
+                    var cntry = $("#country").val();
+                    var lang = $("#lang").val();
+                    var query = $("#query").val();
+                    // alert(category_id)
+                    load_data("filter", query, poi, cntry, lang);
+                });
+            });
+        </script>
 </body>
 <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script type='text/javascript'>
