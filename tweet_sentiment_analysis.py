@@ -4,7 +4,9 @@ import boto3
 
 
 def get_tweets():
-    directory = 'D:\CSE535 - Information Retreival\Project1\CSE_4535_Fall_2021\project1\data_backuplatest\\'
+    for f in os.listdir("data_latest/"):
+        os.remove(os.path.join("data_latest/", f))
+    directory = 'D:\CSE535 - Information Retreival\Project1\CSE_4535_Fall_2021\project1\data\\'
     for filename in os.listdir(directory):
         print(filename)
         with open(directory + filename, 'rb') as f:
@@ -22,13 +24,13 @@ def get_tweets():
 
 def save_file(data, filename):
     df = pd.DataFrame(data)
-    df.to_pickle("data/" + filename)
+    df.to_pickle("data_latest/" + filename)
 
 
 def get_sentiment_score(text):
     comprehend = boto3.client(service_name='comprehend', region_name='us-east-2',
-                              aws_access_key_id='AKIAVQIGLH3RB3I3YCEL',
-                              aws_secret_access_key='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')
+                              aws_access_key_id='<access_key_id>',
+                              aws_secret_access_key='<secret_access_key>')
     sentiment_json = comprehend.detect_sentiment(Text=text, LanguageCode='en')
     sentiment = sentiment_json['Sentiment']
     score = sentiment_json['SentimentScore'][sentiment.capitalize()]

@@ -3,15 +3,16 @@ import pandas as pd
 from indexer import Indexer
 from app import tweetnews
 
+
 def main():
     indexer = Indexer()
     pos = 0
     neg = 0
     mixed = 0
     neutral = 0
-    for filename in os.listdir('data'):
-        # print(filename)
-        with open('data/' + filename, 'rb') as f:
+    for filename in os.listdir('data_latest'):
+        print(filename)
+        with open('data_latest/' + filename, 'rb') as f:
             try:
                 data = pd.read_pickle(f)
                 json_ = data.to_dict(orient='records')
@@ -42,5 +43,5 @@ def test_tweet_news(query):
 
 
 if __name__ == "__main__":
-    test_tweet_news("vaccine is effective")
-    #main()
+    #test_tweet_news("vaccine is effective")
+    main()
